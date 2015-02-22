@@ -9,9 +9,16 @@
     </div>
     <div class="col-md-10">
         <h1>
-            {{ post.title }}
+            <a href="/post/{{ post.id }}">{{ post.title }}</a>
         </h1>
         {{ post.content | safe }}
+        {{ post.id }}
+
+        <a href="/post/{{ post.id }}/edit"> Edit Post</a>
+        <form action="/post/{{ post.id }}/delete" method="post">
+        <button type="submit" value="remove">Delete</button>
+
     </div>
 </div>
 {% endmacro %}
+  

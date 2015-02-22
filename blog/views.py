@@ -6,9 +6,11 @@ from blog import app
 from database import session
 from models import Post
 
+from flask.ext.login import login_required, current_user
+
 @app.route("/")
 @app.route("/page/<int:page>")
-def posts(page=1, paginate_by=10):
+def posts(page=1, paginate_by=25):
     # Zero-indexed page
     page_index = page - 1
 
@@ -46,4 +48,41 @@ def add_post_post():
     session.add(post)
     session.commit()
     return redirect(url_for("posts"))
+
+@app.route("/post/<postid>")
+def post(postid=Post.id):
+    post = session.query(Post).filter(Post.id == postid).first()
+    return render_template(
+        "single_post.html",
+        post=post,
+        postid=postid,
+    )  
+
+@app.route("/post/<postid>/edit", methods=["GET"])
+def edit_post_get(postid=Post.id):
+    return render_template("edit_post.html", post=post,postid=postid)
+
+
+@app.route("/post/<postid>/edit", methods=["POST"])
+def edit_post(postid):
+
+    title = request.form["title"]
+    content = mistune.markdown(request.form["content"])
+
+    session.query(Post).filter_by(id=postid).update(
+        {"title": title, "content": content}
+    )
+
+    session.commit()
+    return redirect(url_for("posts"))
+
+
+@app.route("/post/<postid>/delete", methods=["POST"])
+def delete_post(postid):
+    session.query(Post).filter_by(id=postid).delete()
+    session.commit()
+    return redirect(url_for("posts"))
+
+  
+  
   
