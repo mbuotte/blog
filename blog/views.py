@@ -61,8 +61,9 @@ def post(postid=Post.id):
     )  
 
 @app.route("/post/<postid>/edit", methods=["GET"])
-def edit_post_get(postid=Post.id):
-    return render_template("edit_post.html", post=post,postid=postid)
+def edit_post_get(postid):
+    post = session.query(Post).get(postid)
+    return render_template("edit_post.html", post=post, postid=postid)
 
 
 @app.route("/post/<postid>/edit", methods=["POST"])
